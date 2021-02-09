@@ -6,7 +6,7 @@
 #    By: nsterk <nsterk@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/01/30 18:31:46 by nsterk        #+#    #+#                  #
-#    Updated: 2021/02/09 19:13:10 by nsterk        ########   odam.nl          #
+#    Updated: 2021/02/09 22:21:37 by nsterk        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,12 +17,12 @@ FROM debian:buster
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get -y install wget apt-utils libnss3-tools \
 	nginx mariadb-server \
-	php-fpm php-mysql php-mbstring php-dev php-gd php-pear php-zip php-xml php-curl
+	php-fpm php-mysql php-cli php-mbstring php-gd php-zip
 
 # Copy source files to root.
 COPY srcs/. /root/
 
-# Install and configure SSL certificate.
+# Install and configure SSL certificate.	
 RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64 && \
 	chmod +x ./mkcert-v1.4.3-linux-amd64 && \
 	./mkcert-v1.4.3-linux-amd64 localhost && \
@@ -36,6 +36,10 @@ RUN mv /root/index.html /var/www/html/ && \
 	ln -fs /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/ && \
 	rm -rf /etc/nginx/sites-enabled/default && \
 	nginx -t
+
+# Create index.php
+RUN touch /var/www/html/index.php && \
+	echo "<?php phpinfo(); ?>" >> /var/www/html/index.php
 
 # Configure SQL database.
 RUN bash /root/mysql.sh
