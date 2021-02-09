@@ -6,7 +6,7 @@
 #    By: nsterk <nsterk@student.codam.nl>             +#+                      #
 #                                                    +#+                       #
 #    Created: 2021/01/30 18:31:46 by nsterk        #+#    #+#                  #
-#    Updated: 2021/02/09 17:59:50 by nsterk        ########   odam.nl          #
+#    Updated: 2021/02/09 19:13:10 by nsterk        ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get upgrade -y && \
 	nginx mariadb-server \
 	php-fpm php-mysql php-mbstring php-dev php-gd php-pear php-zip php-xml php-curl
 
-# Copy source files to root
+# Copy source files to root.
 COPY srcs/. /root/
 
 # Install and configure SSL certificate.
@@ -40,7 +40,7 @@ RUN mv /root/index.html /var/www/html/ && \
 # Configure SQL database.
 RUN bash /root/mysql.sh
 
-# Install and configure phpMyAdmin
+# Install and configure phpMyAdmin.
 RUN mkdir /var/www/html/phpmyadmin/
 RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-english.tar.gz && \
 	tar xzfv phpMyAdmin-5.0.4-english.tar.gz -C /root
@@ -49,16 +49,16 @@ RUN cp -a /root/phpMyAdmin-5.0.4-english/. /var/www/html/phpmyadmin/ && \
 	rm -rf phpMyAdmin-5.0.4-english.tar.gz && \
 	mv /root/config.inc.php /var/www/html/phpmyadmin
 
-# Install and configure Wordpress
+# Install and configure Wordpress.
 RUN wget https://wordpress.org/latest.tar.gz
 RUN tar xzvf latest.tar.gz -C /var/www/html/ && \
 	rm -rf latest.tar.gz && \
 	mv /root/wp-config.php /var/www/html/wordpress/
 
-# Configure permissions
+# Configure permissions.
 RUN chown -R www-data:www-data /var/www/* && chmod -R 755 /var/www/*
 
 EXPOSE 80 443
 
-# Start services
+# Start services.
 CMD service mysql restart && service php7.3-fpm start && nginx -g 'daemon off;'
